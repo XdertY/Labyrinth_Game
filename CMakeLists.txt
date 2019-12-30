@@ -3,4 +3,4 @@ project(untitled3)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(untitled3 main.cpp ./Classes/Graph.h)
+add_executable(untitled3 main.cpp ./Classes/Graph.h Classes/Game.h Classes/Entity.h Classes/Enemy.h Classes/Mage.h Classes/Witch.h)

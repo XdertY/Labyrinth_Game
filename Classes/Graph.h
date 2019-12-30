@@ -29,7 +29,4 @@ std::list<char>* Graph::getAdj() {
 }
 
 
-
-
-
 #endif

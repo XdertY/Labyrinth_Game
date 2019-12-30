@@ -1,7 +1,10 @@
-#include <iostream>
-#include "./Classes/Graph.h"
+#import "Functions/Functions.h"
+#include "Classes/Game.h"
+#include <fstream>
+using namespace std;
 
 int main() {
-    Graph* aasd = new Graph(5);
+    Game game;
+    game.play();
     return 0;
 }
