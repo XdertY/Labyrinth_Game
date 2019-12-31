@@ -1,9 +1,11 @@
 #ifndef UNTITLED3_WITCH_H
 #define UNTITLED3_WITCH_H
 
+#include <vector>
 #include "Entity.h"
 
 class Witch : public Entity {
+    std::vector<std::pair<int,int>> path;
 
 public:
     std::pair<int, int> getPosition() override ;

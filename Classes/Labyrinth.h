@@ -80,6 +80,9 @@ void Labyrinth::modify() {
                     i--;
                 }
             }
+            for(int i = 0 ; i < count ; i++) {
+                this->map[blocked[i].first][blocked[i].second] = '*';
+            }
         }
     }
     else if(decision == 'n'){
@@ -89,7 +92,11 @@ void Labyrinth::modify() {
         std::cout<<"Invalid input, please try again!"<<std::endl;
         goto INPUT;
     }
+    Graph graphMap(this->n * this->m);
+    graphMap.buildMatrix(this->map, this->n, this->m);
+    graphMap.dijkstra(0);
 }
+
 
 
 #endif //LABYRINTH_GAME_LABYRINTH_H
