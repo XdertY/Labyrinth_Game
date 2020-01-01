@@ -5,21 +5,16 @@
 
 
 class Graph {
-    int numberOfVec;
+    int numberOfVec, n, m;
     int **adjMatrix;
+    int** redoneMatrix;
 
 public:
     Graph(int numberOfVec);
-
     void buildMatrix(char **matrix, int n, int m);
-
-    bool isValid();
-
-    void dijkstra(int src);
-
-    void printPath(int parent[], int j);
-
-    int minDistance(int dist[], bool sptSet[]);
+    int getNumberOfVec();
+    int** getAdjMatrix();
+    std::pair<int,int> parseNodeToCoordinates(int node);
 };
 
 
@@ -36,20 +31,10 @@ Graph::Graph(int numberOfVec) {
     }
 }
 
-int Graph::minDistance(int *dist, bool *sptSet) {
-    int min = INT_MAX, min_index;
-
-    for (int v = 0; v < this->numberOfVec ; v++)
-        if (sptSet[v] == false &&
-            dist[v] <= min)
-            min = dist[v], min_index = v;
-
-    return min_index;
-}
-
 void Graph::buildMatrix(char** matrix, int n, int m) {
-    int currentElement = 0;
-    int** redoneMatrix = new int*[n];
+    this->n = n;
+    this->m = m;
+    this->redoneMatrix = new int*[n];
     for(int i = 0; i < m ; i ++) {
         redoneMatrix[i] = new int[m];
     }
@@ -80,7 +65,7 @@ void Graph::buildMatrix(char** matrix, int n, int m) {
                        this->adjMatrix[redoneMatrix[i][k]][redoneMatrix[i-1][k]] = 1;
                    }
                 }
-                if(k+1 < n) {
+                if(k+1 < m) {
                    if(redoneMatrix[i][k+1] != -1) {
                        this->adjMatrix[redoneMatrix[i][k]][redoneMatrix[i][k + 1]] = 1;
                    }
@@ -91,73 +76,37 @@ void Graph::buildMatrix(char** matrix, int n, int m) {
                     }
 
                 }
-                currentElement++;
             }
         }
 
     }
-    for(int i = 0; i < this->numberOfVec; i++) {
-        for(int k = 0;k < this->numberOfVec; k++) {
-            std::cout<<this->adjMatrix[i][k]<<" ";
-        }
-        std::cout<<std::endl;
-    }
+//    for(int i = 0; i < this->numberOfVec; i++) {
+//        for(int k = 0;k < this->numberOfVec; k++) {
+//            std::cout<<this->adjMatrix[i][k]<<" ";
+//        }
+//        std::cout<<std::endl;
+//    }
 }
 
-void Graph::dijkstra (int src) {
-    int dist[this->numberOfVec];
-    bool sptSet[this->numberOfVec];
-    int parent[this->numberOfVec];
-    for (int i = 0; i < this->numberOfVec; i++) {
-        parent[0] = -1;
-        dist[i] = INT_MAX;
-        sptSet[i] = false;
-    }
-    dist[src] = 0;
+int Graph::getNumberOfVec() {
+    return this->numberOfVec;
+}
 
-    for (int count = 0; count < this->numberOfVec - 1; count++) {
+int** Graph::getAdjMatrix() {
+    return this->adjMatrix;
+}
 
-        int u = minDistance(dist, sptSet);
-
-
-        sptSet[u] = true;
-
-
-        for (int v = 0; v < this->numberOfVec; v++)
-
-
-            if (!sptSet[v] && adjMatrix[u][v] &&
-                dist[u] + adjMatrix[u][v] < dist[v]) {
-                parent[v] = u;
-                dist[v] = dist[u] + this->adjMatrix[u][v];
+std::pair<int, int> Graph::parseNodeToCoordinates(int node) {
+    for(int i = 0 ; i < n; i++) {
+        for(int k = 0 ; k < m ; k++) {
+            if(this->redoneMatrix[i][k] == node) {
+                std::pair<int, int> coord ;
+                coord.first = i;
+                coord.second = k;
+                return coord;
             }
-    }
-
-    printf("Vertex\t Distance\tPath");
-    for (int i = 1; i < this->numberOfVec; i++)
-    {
-        printf("\n%d -> %d \t\t %d\t\t%d ",
-               src, i, dist[i], src);
-        this->printPath(parent, i);
+        }
     }
 }
-
-void Graph::printPath(int parent[], int j)
-{
-
-    // Base Case : If j is source
-    if (parent[j] == - 1)
-        return;
-
-    printPath(parent, parent[j]);
-
-    printf("%d ", j);
-}
-
-
-bool Graph::isValid() {
-
-}
-
 
 #endif
