@@ -16,14 +16,14 @@ class Labyrinth {
 
 public:
     Labyrinth(char** map, int numberOfMonsters, int n, int m);
+    bool operator > (Labyrinth& other);
     void addEnemies();
     void blockPath();
     void printLabyrinth();
     void modify(Entity* player);
     void placeEnemies();
-    void moveEnemies();
+    void moveEnemies(std::pair<int,int> playerPos);
     std::vector<Enemy> getEnemiesList();
-
 };
 
 Labyrinth::Labyrinth(char** map, int numberOfMonsters, int n, int m) {
@@ -99,6 +99,7 @@ void Labyrinth::modify(Entity* player) {
     }
     Graph graphMap(this->n * this->m);
     graphMap.buildMatrix(this->map, this->n, this->m);
+    std::cout<<"@ - player | X - enemy | # - wall"<<std::endl;
     if(player->generatePath(graphMap)) {
         this->placeEnemies();
     }
@@ -113,32 +114,36 @@ void Labyrinth::modify(Entity* player) {
 
 void Labyrinth::placeEnemies() {
     for(int i = 0 ; i < this->numberOfMonsters; i++) {
-        Enemy enemy(n,m,map);
+        Enemy enemy(n,m,map, this->getEnemiesList());
         this->enemies.push_back(enemy);
     }
 }
 
-void Labyrinth::moveEnemies() {
-    for(Enemy e :this->enemies) {
-        e.movement(map, n, m);
+void Labyrinth::moveEnemies(std::pair<int,int> playerPos) {
+    for(int i = 0 ; i < enemies.size(); i++) {
+        this->enemies[i].movement(map, n, m);
     }
-    std::vector<std::pair<int,int>> tempPos;
-    for(Enemy e :this->enemies) {
-        tempPos.push_back(e.getPosition());
+    char** temp = new char*[n];
+    for(int i = 0; i < n; i++) {
+        temp[i] = new char[m];
     }
+
     for(int i = 0; i < n ; i++) {
         for(int k = 0; k < m ; k ++) {
-            bool printed = false;
-            for(int j= 0; j < tempPos.size(); j ++) {
-                if((i == tempPos[j].first) && (k == tempPos[j].second)) {
-                    std::cout<<"X";
-                    printed = true;
-                    break;
-                }
-            }
-            if(!printed) {
-                std::cout<<this->map[i][k];
-            }
+            temp[i][k] = map[i][k];
+        }
+    }
+
+    for(Enemy e : this->enemies) {
+        temp[e.getPosition().first][e.getPosition().second] = 'X';
+    }
+
+    temp[playerPos.first][playerPos.second] = '@';
+
+    std::cout<<std::endl;
+    for(int i =0; i < n; i++) {
+        for(int k = 0; k < m; k++) {
+            std::cout<<temp[i][k];
         }
         std::cout<<std::endl;
     }
@@ -148,6 +153,18 @@ void Labyrinth::moveEnemies() {
 
 std::vector<Enemy> Labyrinth::getEnemiesList() {
     return  this->enemies;
+}
+
+bool Labyrinth:: operator>(Labyrinth& other) {
+    int size = this->n*this->m;
+    if(size > (other.n*other.m)){
+        return true;
+    }
+    if(size == other.n*other.m) {
+        return this->numberOfMonsters > other.numberOfMonsters;
+    }
+    else
+        return false;
 }
 
 

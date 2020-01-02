@@ -4,14 +4,15 @@
 #include <vector>
 #include "Labyrinth.h"
 #include "Entity.h"
-#include "Whitch.h"
+#include "Witch.h"
 #include "Mage.h"
 #include <fstream>
 #include <iostream>
 
 class Game {
     std::vector<Labyrinth> listOfValidLabyrinths;
-    int currentLab = 0;
+    int currentLab;
+    bool GAMEOVER ;
     Entity* player;
     void loadLabyrinths();
     void printCurrLab();
@@ -19,6 +20,7 @@ class Game {
     void loop();
     void modifyCurrLab(Entity* player);
     void playThroughLab();
+    void sortLabyrints();
 public:
     Game();
     void play();
@@ -26,7 +28,8 @@ public:
 };
 
 Game::Game() {
-
+    this->currentLab = 0;
+    this->GAMEOVER = false;
 }
 
 void Game::loadLabyrinths() {
@@ -65,13 +68,13 @@ void Game::printCurrLab() {
 
 void Game::selectClass() {
     std::cout<<"Please select a class: "<<std::endl;
-    std::cout<<"1: Whitch - Finds the fastest path in the labyrinth"<<std::endl;
+    std::cout<<"1: Witch - Finds the fastest path in the labyrinth"<<std::endl;
     std::cout<<"2: Mage - While searching for path, the mage can teleport back to the last position where another way was available  "<<std::endl;
     int choice;
     INPUT:std::cin>>choice;
     switch(choice) {
         case 1: {
-            this->player = new Whitch;
+            this->player = new Witch;
             break;
         }
         case 2: {
@@ -94,16 +97,23 @@ void Game::loop() {
         this->printCurrLab();
         this->modifyCurrLab(this->player);
         this->playThroughLab();
+        if(this->GAMEOVER) {
+            return;
+        }
+        else if(this->currentLab == this->listOfValidLabyrinths.size() - 1) {
+            std::cout<<"YOU HAVE WON!!"<<std::endl;
+        }
     }
 }
 
 void Game::playThroughLab() {
     int curr = 0;
     while(true){
-        this->listOfValidLabyrinths[this->currentLab].moveEnemies();
+        this->listOfValidLabyrinths[this->currentLab].moveEnemies(player->getPath()[curr]);
         for(Enemy e : this->listOfValidLabyrinths[this->currentLab].getEnemiesList()) {
             if(player->getPath()[curr] == e.getPosition()) {
                 std::cout << "You have been killed! GAME OVER!!" << std::endl;
+                this->GAMEOVER = true;
                 return;
             }
         }
@@ -117,9 +127,18 @@ void Game::playThroughLab() {
     }
 }
 
+void Game::sortLabyrints() {
+    for (int i = 0; i < this->listOfValidLabyrinths.size()-1; i++)
+
+        for (int j = 0; j < this->listOfValidLabyrinths.size()-i-1; j++)
+            if (this->listOfValidLabyrinths[j+1] > this->listOfValidLabyrinths[j])
+                std::swap(this->listOfValidLabyrinths[j], this->listOfValidLabyrinths[j+1]);
+}
+
 void Game::play() {
     this->loadLabyrinths();
     this->selectClass();
+    this->sortLabyrints();
     this->loop();
 }
 

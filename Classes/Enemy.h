@@ -7,25 +7,16 @@ class Enemy {
     std::pair<int,int> position;
 
 public:
-    Enemy(int n, int m, char** map);
+    Enemy(int n, int m, char** map, std::vector<Enemy> enemiesPos);
     std::pair<int, int> getPosition();
     void movement(char** map, int n, int m) ;
-    void printMap(char** map, int n, int m);
+    bool isValid(std::vector<Enemy> enemiesPos);
+    void generatePosition(int n , int m, char** map, std::vector<Enemy> enemyPos);
 };
 
-Enemy::Enemy(int n, int m, char** map) {
+Enemy::Enemy(int n, int m, char** map, std::vector<Enemy> enemiesPos) {
     this->movementState = 1;
-    srand(time(0));
-    std::pair<int,int> position;
-    position.first = rand() % n;
-    position.second = rand() % m;
-    if(map[position.first][position.second] == '#') {
-        Enemy(n,m,map);
-    }
-    else{
-        this->position = position;
-    }
-
+    this->generatePosition(n,m,map,enemiesPos);
 }
 
 std::pair<int,int> Enemy::getPosition() {
@@ -96,20 +87,31 @@ void Enemy::movement(char** map, int n, int m) {
             this->movement(map, n, m);
         }
     }
+
 }
 
-void Enemy::printMap(char **map, int n, int m) {
-    for(int i = 0; i < n ; i++) {
-        for(int k = 0; k < m; k++) {
-            if(i == this->position.first && k == this->position.second) {
-                std::cout<<"X";
-            }
-            else{
-                std::cout<<map[i][k];
-            }
+bool Enemy::isValid(std::vector<Enemy> enemiesPos) {
+    for(Enemy e : enemiesPos) {
+        if(e.position.first == this->position.first && e.position.second == this->position.second) {
+            return false;
         }
-        std::cout<<std::endl;
     }
+    return true;
 }
+
+void Enemy::generatePosition(int n , int m, char** map, std::vector<Enemy> enemyPos) {
+    do {
+        srand(time(0));
+        std::pair<int, int> position;
+        this->position.first = rand() % (n);
+        this->position.second = rand() % (m);
+    }
+    while(map[position.first][position.second] == '#' || (position.first == 0 && position.second == 0) ||
+          !this->isValid(enemyPos)) ;
+
+    return;
+
+}
+
 
 #endif //UNTITLED3_ENEMY_H

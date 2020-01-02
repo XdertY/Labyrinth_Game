@@ -1,10 +1,10 @@
-#ifndef UNTITLED3_WHITCH_H
-#define UNTITLED3_WHITCH_H
+#ifndef UNTITLED3_WITCH_H
+#define UNTITLED3_WITCH_H
 
 #include <vector>
 #include "Entity.h"
 
-class Whitch : public Entity {
+class Witch : public Entity {
     std::vector<std::pair<int, int>> shortestPath;
 
 public:
@@ -17,11 +17,11 @@ public:
 };
 
 
-bool Whitch::generatePath(Graph graphMap) {
+bool Witch::generatePath(Graph graphMap) {
     return this->djikstra(0, graphMap);
 }
 
-bool Whitch::djikstra (int src, Graph graphMap ) {
+bool Witch::djikstra (int src, Graph graphMap ) {
     int numberOfVec = graphMap.getNumberOfVec();
     int dist[numberOfVec];
     bool sptSet[numberOfVec];
@@ -54,12 +54,15 @@ bool Whitch::djikstra (int src, Graph graphMap ) {
         return false;
     }
 
+    std::pair<int,int> start;
+    start.first = 0, start.second = 0;
+    this->shortestPath.push_back(start);
     this->buildShortestPath(parent, numberOfVec-1, graphMap);
 
     return true;
 }
 
-int Whitch::minDistance(int *dist, bool *sptSet, int numberOfVec) {
+int Witch::minDistance(int *dist, bool *sptSet, int numberOfVec) {
     int min = INT_MAX, min_index;
 
     for (int v = 0; v < numberOfVec ; v++)
@@ -68,7 +71,7 @@ int Whitch::minDistance(int *dist, bool *sptSet, int numberOfVec) {
 
     return min_index;
 }
-void Whitch::buildShortestPath(int parent[], int j, Graph graphMap)
+void Witch::buildShortestPath(int parent[], int j, Graph graphMap)
 {
 
     // Base Case : If j is source
@@ -80,16 +83,16 @@ void Whitch::buildShortestPath(int parent[], int j, Graph graphMap)
     this->shortestPath.push_back(graphMap.parseNodeToCoordinates(j));
 }
 
-void Whitch::printShortestPath() {
+void Witch::printShortestPath() {
     for(std::pair<int,int> a : this->shortestPath) {
         std::cout<<a.first<<","<<a.second<< " ";
     }
 }
 
-std::vector<std::pair<int,int>> Whitch::getPath() {
+std::vector<std::pair<int,int>> Witch::getPath() {
     return this->shortestPath;
 }
 
 
 
-#endif //UNTITLED3_WHITCH_H
+#endif //UNTITLED3_WITCH_H
