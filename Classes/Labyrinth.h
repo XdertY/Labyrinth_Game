@@ -11,14 +11,12 @@ class Labyrinth {
     int numberOfMonsters;
     std::vector<Enemy> enemies;
 //    std::vector<Enemy> enemies;
-//    std::vector<std::pair<int, int>> blockedPositions;
+    std::vector<std::pair<int, int>> freePositions;
 
 
 public:
     Labyrinth(char** map, int numberOfMonsters, int n, int m);
     bool operator > (Labyrinth& other);
-    void addEnemies();
-    void blockPath();
     void printLabyrinth();
     void modify(Entity* player);
     void placeEnemies();
@@ -31,14 +29,18 @@ Labyrinth::Labyrinth(char** map, int numberOfMonsters, int n, int m) {
     this->numberOfMonsters = numberOfMonsters;
     this->n = n;
     this->m = m;
-}
-
-void Labyrinth::addEnemies() {
-
-}
-
-void Labyrinth::blockPath() {
-
+    for(int i = 0; i < n; i++) {
+        for(int k = 0 ;k < m ; k++) {
+            if(map[i][k] == '.') {
+                if(!(i == 0 && k == 0)) {
+                    std::pair<int, int> freePos;
+                    freePos.first = i;
+                    freePos.second = k;
+                    freePositions.push_back(freePos);
+                }
+            }
+        }
+    }
 }
 
 void Labyrinth::printLabyrinth() {
@@ -114,7 +116,7 @@ void Labyrinth::modify(Entity* player) {
 
 void Labyrinth::placeEnemies() {
     for(int i = 0 ; i < this->numberOfMonsters; i++) {
-        Enemy enemy(n,m,map, this->getEnemiesList());
+        Enemy enemy(n,m,map, this->getEnemiesList(), &this->freePositions);
         this->enemies.push_back(enemy);
     }
 }

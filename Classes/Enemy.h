@@ -7,16 +7,16 @@ class Enemy {
     std::pair<int,int> position;
 
 public:
-    Enemy(int n, int m, char** map, std::vector<Enemy> enemiesPos);
+    Enemy(int n, int m, char** map, std::vector<Enemy> enemiesPos, std::vector<std::pair<int,int>>* freePositions);
     std::pair<int, int> getPosition();
     void movement(char** map, int n, int m) ;
     bool isValid(std::vector<Enemy> enemiesPos);
-    void generatePosition(int n , int m, char** map, std::vector<Enemy> enemyPos);
+    void generatePosition(int n , int m, char** map, std::vector<Enemy> enemyPos, std::vector<std::pair<int,int>>* freePositions);
 };
 
-Enemy::Enemy(int n, int m, char** map, std::vector<Enemy> enemiesPos) {
+Enemy::Enemy(int n, int m, char** map, std::vector<Enemy> enemiesPos, std::vector<std::pair<int,int>>* freePositions) {
     this->movementState = 1;
-    this->generatePosition(n,m,map,enemiesPos);
+    this->generatePosition(n,m,map,enemiesPos, freePositions);
 }
 
 std::pair<int,int> Enemy::getPosition() {
@@ -99,18 +99,12 @@ bool Enemy::isValid(std::vector<Enemy> enemiesPos) {
     return true;
 }
 
-void Enemy::generatePosition(int n , int m, char** map, std::vector<Enemy> enemyPos) {
-    do {
-        srand(time(0));
-        std::pair<int, int> position;
-        this->position.first = rand() % (n);
-        this->position.second = rand() % (m);
-    }
-    while(map[position.first][position.second] == '#' || (position.first == 0 && position.second == 0) ||
-          !this->isValid(enemyPos)) ;
-
-    return;
-
+void Enemy::generatePosition(int n , int m, char** map, std::vector<Enemy> enemyPos, std::vector<std::pair<int,int>>* freePositions) {
+    srand(time(0));
+    int position = rand() % freePositions->size();
+    this->position = freePositions->at(position);
+    freePositions->erase(freePositions->begin() + position);
+    std::cout<<"ENEMY LOCATION "<<this->position.first<<" "<<this->position.second<<std::endl;
 }
 
 

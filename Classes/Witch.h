@@ -18,6 +18,7 @@ public:
 
 
 bool Witch::generatePath(Graph graphMap) {
+    this->shortestPath.clear();
     return this->djikstra(0, graphMap);
 }
 

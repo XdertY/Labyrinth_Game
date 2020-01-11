@@ -17,6 +17,7 @@ public:
 
 
 bool Mage::generatePath(Graph graphMap) {
+    this->path.clear();
     bool* visited = new bool[graphMap.getNumberOfVec()];
     for(int i = 0 ; i < graphMap.getNumberOfVec(); i++) {
         visited[i] = false;

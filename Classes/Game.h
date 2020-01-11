@@ -110,6 +110,7 @@ void Game::playThroughLab() {
     int curr = 0;
     while(true){
         this->listOfValidLabyrinths[this->currentLab].moveEnemies(player->getPath()[curr]);
+        std::cout<<"Player's position : "<<this->player->getPath()[curr].first<<" "<<this->player->getPath()[curr].second<<std::endl;
         for(Enemy e : this->listOfValidLabyrinths[this->currentLab].getEnemiesList()) {
             if(player->getPath()[curr] == e.getPosition()) {
                 std::cout << "You have been killed! GAME OVER!!" << std::endl;
